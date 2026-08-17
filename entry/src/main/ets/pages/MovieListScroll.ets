@@ -144,7 +144,6 @@ export struct MovieListScroll {
   lastCardOffset: number = 0;
   @Link @Watch("onIndexChange") currentIndex: number  //居中的索引
   @Link movies:Movie[]
-
   // 每个卡片初始位置
   aboutToAppear() {
     for (let i = 0; i < this.movies.length; i++) {
@@ -181,7 +180,6 @@ export struct MovieListScroll {
       // 滑动组件
       Scroll(this.scroller) {
         Row({ space: this.cardSpace }) {
-
           ForEach(this.movies, (item: Movie, index) => {
             Image(HttpUtil.BASE_URL + item.posterUrl)
               .width(this.cardWidth)

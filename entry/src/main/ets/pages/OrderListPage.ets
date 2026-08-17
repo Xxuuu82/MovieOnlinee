@@ -110,14 +110,28 @@ struct OrderListPage {
     return poster ? httpUtil.BASE_URL + poster : '';
   }
 
+  // ==========================================================
+  // 跳转到订单详情页
+  // ==========================================================
+  goToOrderDetail(orderId: number): void {
+    console.log('===== 跳转订单详情 =====');
+    console.log('orderId:', orderId);
+
+    this.getUIContext().getRouter().pushUrl({
+      url: 'pages/OrderDetailPage',
+      params: {
+        orderId: orderId
+      }
+    });
+  }
+
   async cancelOrder(orderId: number): Promise<void> {
     try {
       console.log('===== 取消订单 =====');
       console.log('orderId:', orderId);
 
       const result = await httpUtil.post<HttpResponseResult<object>>(
-        `/user/order/cancel?orderId=${orderId}`,
-        {}
+        `/user/order/cancel?orderId=${orderId}`
       );
 
       console.log('取消订单响应:', JSON.stringify(result));
@@ -297,6 +311,7 @@ struct OrderListPage {
         .width('100%')
         .padding({ left: 12, right: 12, top: 8, bottom: 12 })
         .justifyContent(FlexAlign.End)
+        .hitTestBehavior(HitTestMode.Block) // 阻止点击事件透传到父组件
       } else {
         Row()
           .width('100%')
@@ -307,6 +322,9 @@ struct OrderListPage {
     .padding({ top: 4, bottom: 4 })
     .backgroundColor('#ffffff')
     .borderRadius(8)
+    .onClick(() => {
+      this.goToOrderDetail(order.id);
+    })
   }
 
   build() {

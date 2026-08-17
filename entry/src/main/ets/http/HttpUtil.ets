@@ -2,6 +2,9 @@ import { http } from "@kit.NetworkKit";
 
 export class  HttpUtil{
   BASE_URL:string="http://10.98.25.203:8081/movieplatform";
+
+  static BASE_URL: string | undefined;
+
   private request<T>(url:string,method:http.RequestMethod,extraData?:Object):Promise<T>{
 		return new Promise((resolve,reject)=>{
       let httpRequest = http.createHttp();
@@ -24,12 +27,30 @@ export class  HttpUtil{
       );
     });
 	}
-  get<T>(url:string):Promise<T>{
-		return this.request(url,http.RequestMethod.GET);
-	}
+  get<T>(url: string, params?: Record<string, string | number>): Promise<T> {
+    // 如果有参数，拼接到 URL 后面
+    let fullUrl = url;
+    if (params) {
+      const keys = Object.keys(params);
+      const queryParts: string[] = [];
+      for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        const value = params[key];
+        if (value !== undefined && value !== null && value !== '') {
+          queryParts.push(`${key}=${encodeURIComponent(String(value))}`);
+        }
+      }
+      if (queryParts.length > 0) {
+        fullUrl = url + '?' + queryParts.join('&');
+      }
+    }
+    return this.request<T>(fullUrl, http.RequestMethod.GET);
+  }
 
-  post<T>(url:string,params:ESObject):Promise<T>{
-    return this.request(url,http.RequestMethod.POST,params);
+
+
+  post<T>(url: string, params?: Object): Promise<T> {
+    return this.request<T>(url, http.RequestMethod.POST, params);
   }
 }
 export default new HttpUtil();

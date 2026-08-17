@@ -1,57 +1,53 @@
-import { CategoryComp } from '../component/CategoryComp';
-import { CinemaComp } from '../component/CinemaComp';
-import { HomeComp } from '../component/HomeComponent';
-import { MyComp } from '../component/MyComp';
+import { CategoryComponent } from '../component/CategoryComponent';
+import { CinemaComponent } from '../component/CinemaComponent';
+import { HomeComponent } from '../component/HomeComponent';
+import { MyComponent } from '../component/MyComponent';
+import { url } from '@kit.ArkTS';
 
 @Entry
 @Component
-struct Index {
-  @State currentIndex:number=0;
+struct MainPage {
+  @State currentIndex: number = 0;
   @Builder
-  tabBuilder(index:number,title:string,icon:Resource){
-    Column({space:5}){
-      SymbolGlyph(icon)
-        .fontSize(30)
-        .fontColor(this.currentIndex==index?["#ff70b7f1"]:["#ff797700"])
-      Text(title)
-        .fontSize(18)
-        .fontColor(this.currentIndex==index?"#ff70b7f1":"#ff797700")
+  tabBuilder(title: string, targetIndex: number, icon: Resource) {
+    Column() {
+      SymbolGlyph(icon).fontSize(32)
+        .fontColor([this.currentIndex === targetIndex?'#1698CE' :'#6B6B6B'])
+      Text(title).fontSize(16)
+        .fontColor(this.currentIndex === targetIndex ? '#1698CE' : '#6B6B6B')
     }
+    .width('100%')
+    .justifyContent(FlexAlign.Center)
+    .borderWidth({top:1})
+    .borderColor("#ffb0acac")
+    .padding({top:10})
   }
-
-
 
   build() {
-    Tabs() {
-      TabContent() {
-        HomeComp()
-      }.tabBar(this.tabBuilder(0, "首页", $r("sys.symbol.house")))
+    Tabs({barPosition:BarPosition.End}){
+      TabContent(){
+        HomeComponent()
+      }
+      .tabBar(this.tabBuilder("首页",0,$r("sys.symbol.house")))
 
-      TabContent() {
-        CategoryComp()
-      }.tabBar(this.tabBuilder(1, "分类", $r("sys.symbol.list_bullet")))
 
-      TabContent() {
-        CinemaComp()
-      }.tabBar(this.tabBuilder(2, "影院", $r("sys.symbol.media_center")))
+      TabContent(){
+        CategoryComponent()
+      }.tabBar(this.tabBuilder("分类",1,$r("sys.symbol.grid")))
 
-      TabContent() {
-        MyComp()
-      }.tabBar(this.tabBuilder(3, "我的", $r("sys.symbol.person")))
+      TabContent(){
+        CinemaComponent()
+      }.tabBar(this.tabBuilder("影院",2,$r("sys.symbol.local")))
 
-    }.vertical(false)
-    .barPosition(BarPosition.End)
-    .barHeight(80)
-    .onChange((index)=>{
+      TabContent(){
+        MyComponent()
+      }.tabBar(this.tabBuilder("我的",3,$r("sys.symbol.person")))
+
+    }.onChange((index:number)=>{
       this.currentIndex=index
     })
-
-
-
-
-    .height('100%')
-    .width('100%')
+    .width("100%")
+    .height("100%")
+    .barHeight(60)
   }
 }
-
-
