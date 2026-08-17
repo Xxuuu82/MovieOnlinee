@@ -4,6 +4,7 @@
     "pages/LoginPage",
     "pages/CinemaDetail",
     "pages/SelectSeatPage",
-    "pages/MovieCinemaListPage"
+    "pages/MovieCinemaListPage",
+    "pages/OrderDetailPage"
   ]
 }
