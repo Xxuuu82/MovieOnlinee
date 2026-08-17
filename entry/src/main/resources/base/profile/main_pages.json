@@ -1,0 +1,13 @@
+{
+  "src": [
+    "pages/Index",
+    "pages/Second",
+    "pages/loginPage",
+    "pages/CinemaDetail",
+    "pages/MovieListScroll",
+    "pages/SelectSeatPage",
+    "pages/RegisterPage",
+    "pages/OrderListPage"
+
+  ]
+}
