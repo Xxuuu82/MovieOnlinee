@@ -28,6 +28,7 @@ export default function localUnitTest() {
 
       expect(getMovieTypeText([action, fantasy], '1,3')).assertEqual('动作 / 奇幻');
       expect(getMovieTypeText(undefined, '剧情')).assertEqual('剧情');
+      expect(getMovieTypeText(undefined, '1,3')).assertEqual('类型待定');
       expect(getMovieTypeText(undefined, '')).assertEqual('类型待定');
     });
 

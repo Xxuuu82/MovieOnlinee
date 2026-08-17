@@ -16,8 +16,13 @@ export function getMovieTypeText(movieTypes: MovieType[] | undefined, fallback: 
     }
   }
 
-  if (fallback.trim().length > 0) {
-    return fallback;
+  const trimmedFallback: string = fallback.trim();
+  if (trimmedFallback.length > 0) {
+    // Movie.type可能是逗号分隔的类型ID，不在页面显示原始ID
+    if (/^\d+(?:\s*,\s*\d+)*$/.test(trimmedFallback)) {
+      return '类型待定';
+    }
+    return trimmedFallback;
   }
   return '类型待定';
 }
