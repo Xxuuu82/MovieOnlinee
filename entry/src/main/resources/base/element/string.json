@@ -1,0 +1,20 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "应用模块描述"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "入口Ability描述"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "通鸿影院"
+    },
+    {
+      "name": "internet_reason",
+      "value": "用于访问网络获取电影数据"
+    }
+  ]
+}
