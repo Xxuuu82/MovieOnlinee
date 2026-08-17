@@ -1,4 +1,5 @@
-import { Movie } from "../http/Movie";
+import { Movie } from "./Movie";
+
 
 export interface MovieFavorite{
   id?:number;
