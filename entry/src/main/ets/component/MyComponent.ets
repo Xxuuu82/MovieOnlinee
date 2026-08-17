@@ -6,14 +6,6 @@ import { UserAccount } from "../model/UserAccount"
 export struct MyComponent {
   // ==========================================================
   // 当前登录用户
-  //
-  // 关键：
-  // 使用 StorageLink 监听 AppStorage 中的 userAccount
-  //
-  // LoginPage 登录成功：
-  // AppStorage.setOrCreate('userAccount', account)
-  //
-  // 这里会自动更新
   // ==========================================================
   @StorageLink('userAccount')
   userAccount: UserAccount | null = null
@@ -25,7 +17,27 @@ export struct MyComponent {
     this.getUIContext()
       .getRouter()
       .pushUrl({
-        url: 'pages/LoginPage'
+        url: 'pages/loginPage'
+      })
+  }
+
+  // ==========================================================
+  // 跳转订单列表
+  // ==========================================================
+  goToOrderList(): void {
+    // 未登录
+    if (!this.userAccount) {
+      this.getUIContext().getPromptAction().showToast({
+        message: "请先登录",
+        bottom: "50%"
+      })
+      return
+    }
+    // 已登录
+    this.getUIContext()
+      .getRouter()
+      .pushUrl({
+        url: 'pages/OrderListPage'
       })
   }
 
@@ -257,9 +269,11 @@ export struct MyComponent {
           this.MenuItem('尊享会员', 'person_crop_circle_fill_1')
 
           // ==================================================
-          // 我的订单
+          // 我的订单 - 添加点击事件
           // ==================================================
-          this.MenuItem('我的订单', 'satellite_map')
+          this.MenuItem('我的订单', 'satellite_map', () => {
+            this.goToOrderList()
+          })
 
           // ==================================================
           // 优惠券
@@ -320,10 +334,10 @@ export struct MyComponent {
   }
 
   // ==========================================================
-  // 下方菜单
+  // 下方菜单 - 增加可选的点击回调参数
   // ==========================================================
   @Builder
-  MenuItem(title: string, iconName: string) {
+  MenuItem(title: string, iconName: string, onClick?: () => void) {
     Column() {
       Row() {
         // 尊享会员
@@ -382,6 +396,11 @@ export struct MyComponent {
       }
       .width('100%')
       .height(55)
+      .onClick(() => {
+        if (onClick) {
+          onClick()
+        }
+      })
 
       Divider()
         .width('calc(100% - 32vp)')

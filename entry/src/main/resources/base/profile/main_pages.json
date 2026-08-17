@@ -4,6 +4,8 @@
     "pages/LoginPage",
     "pages/CinemaDetail",
     "pages/SelectSeatPage",
+    "pages/RegisterPage",
+    "pages/OrderListPage",
     "pages/OrderDetailPage",
     "pages/MovieCinemaListPage",
     "pages/CinemaSaveList"

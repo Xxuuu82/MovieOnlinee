@@ -13,3 +13,4 @@ export interface UserBalance {
   userId:number;
   balance: number;
 }
+

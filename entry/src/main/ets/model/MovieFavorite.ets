@@ -1,4 +1,4 @@
-import { Movie } from "../model/Movie";
+import { Movie } from "./Movie";
 
 export interface MovieFavorite{
   id?:number;
