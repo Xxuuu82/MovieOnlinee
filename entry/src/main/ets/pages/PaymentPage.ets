@@ -1,3 +1,4 @@
+// pages/PaymentPage.ets
 
 import HttpUtil from '../http/HttpUtil';
 import promptAction from '@ohos.promptAction';
@@ -29,6 +30,11 @@ interface PayResult {
   qrCodeContent: string;
 }
 
+// 支付页面跳转参数
+interface PaymentPageParams {
+  orderId: number;
+}
+
 @Entry
 @Component
 struct PaymentPage {
@@ -41,7 +47,7 @@ struct PaymentPage {
   // 支付相关
   @State selectedMethod: PaymentMethod = PaymentMethod.BALANCE;
   @State isPaying: boolean = false;
-  @State remainingBalance: number = 0; // 账户余额
+  @State remainingBalance: number = 0;
 
   @StorageLink("userAccount")
   userAccount: UserAccount | null = null;
@@ -58,8 +64,14 @@ struct PaymentPage {
     const params: ESObject = this.getUIContext().getRouter().getParams();
     this.orderId = params?.orderId ?? 0;
 
+    if (this.orderId <= 0) {
+      promptAction.showToast({ message: '订单参数错误' });
+      this.getUIContext().getRouter().back();
+      return;
+    }
+
     // 查询账户余额
-    this.getBalance()
+    await this.getBalance();
 
     // 加载订单详情
     await this.loadOrderDetail();
@@ -107,8 +119,11 @@ struct PaymentPage {
             this.movie = movieResponse.data;
           }
         }
+      } else {
+        promptAction.showToast({ message: orderResponse.message || '加载订单信息失败' });
       }
     } catch (error) {
+      console.error('加载订单详情异常:', error);
       promptAction.showToast({ message: '加载订单信息失败' });
     }
   }
@@ -155,18 +170,49 @@ struct PaymentPage {
       if (response.code === 200) {
         promptAction.showToast({ message: '支付成功' });
 
-        // 延迟返回上一页（订单详情页暂未创建）
+        // 支付成功后跳转到订单详情页
         setTimeout(() => {
-          this.getUIContext().getRouter().back()
-        }, 800)
+          const router = this.getUIContext().getRouter();
+          router.pushUrl({
+            url: 'pages/OrderDetailPage',
+            params: {
+              orderId: this.order?.id
+            }
+          });
+        }, 500);
       } else {
         promptAction.showToast({ message: response.message || '支付失败' });
       }
     } catch (error) {
+      console.error('支付异常:', error);
       promptAction.showToast({ message: '支付请求失败，请重试' });
     } finally {
       this.isPaying = false;
     }
+  }
+
+  // 返回上一页
+  goBack() {
+    this.getUIContext().getRouter().back();
+  }
+
+  // 格式化日期时间
+  private formatDateTime(): string {
+    if (!this.schedule) return '';
+    const showTime = this.schedule.showTime;
+    if (!showTime) return '';
+
+    const date = new Date(showTime);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    const endDate = new Date(date.getTime() + (this.movie?.duration ?? 0) * 60000);
+    const endHours = String(endDate.getHours()).padStart(2, '0');
+    const endMinutes = String(endDate.getMinutes()).padStart(2, '0');
+
+    return `${month}月${day}日 ${hours}:${minutes}-${endHours}:${endMinutes}`;
   }
 
   build() {
@@ -177,7 +223,13 @@ struct PaymentPage {
           .fontSize(24)
           .padding({ left: 5 })
           .onClick(() => {
-            this.getUIContext().getRouter().back();
+            console.info('返回"我的"页面');
+            this.getUIContext().getRouter().replaceUrl({
+              url: 'pages/Index',
+              params: {
+                targetIndex: 3  // "我的" Tab 的索引
+              }
+            });
           });
         Text('确认订单')
           .fontSize(18)
@@ -199,11 +251,8 @@ struct PaymentPage {
         Column({ space: 12 }) {
           // ========== 电影信息卡片 ==========
           Column() {
-            // 电影信息行（水平布局：左侧信息 + 右侧海报）
             Row() {
-              // 左侧：电影信息
               Column() {
-                // 电影名称
                 Text(this.movie?.movieName ?? '')
                   .fontSize(18)
                   .fontWeight(FontWeight.Bold)
@@ -211,14 +260,12 @@ struct PaymentPage {
                   .width('100%')
                   .margin({ bottom: 4 });
 
-                // 时间信息
                 Text(this.formatDateTime())
                   .fontSize(13)
                   .fontColor('#666666')
                   .width('100%')
                   .margin({ bottom: 2 });
 
-                // 影院和影厅
                 Row() {
                   Text(this.schedule?.cinemaName ?? '')
                     .fontSize(13)
@@ -234,7 +281,6 @@ struct PaymentPage {
                 .width('100%')
                 .margin({ bottom: 2 });
 
-                // 座位信息
                 Row() {
                   Text('座位：')
                     .fontSize(13)
@@ -249,7 +295,6 @@ struct PaymentPage {
               .layoutWeight(1)
               .alignItems(HorizontalAlign.Start);
 
-              // 右侧：电影海报
               Column() {
                 Image(HttpUtil.BASE_URL + this.movie?.posterUrl)
                   .width(90)
@@ -261,13 +306,11 @@ struct PaymentPage {
             }
             .width('100%');
 
-            // 分割线
             Divider()
               .color('#F0F0F0')
               .height(1)
               .margin({ top: 12, bottom: 12 });
 
-            // 底部价格信息
             Row() {
               Text('需支付：')
                 .fontSize(14)
@@ -299,7 +342,6 @@ struct PaymentPage {
               .width('100%')
               .margin({ bottom: 12 });
 
-            // 余额显示
             Row() {
               Row() {
                 Text('￥')
@@ -322,10 +364,8 @@ struct PaymentPage {
             .width('100%')
             .margin({ bottom: 12 });
 
-            // 支付方式列表
             ForEach(this.paymentOptions, (option: PaymentOption) => {
               Row() {
-                // 选择框
                 Checkbox()
                   .shape(CheckBoxShape.CIRCLE)
                   .select(this.isSelected(option.key))
@@ -337,7 +377,6 @@ struct PaymentPage {
                     }
                   });
 
-                // 支付方式图标
                 Row() {
                   Text(option.iconText)
                     .fontSize(18)
@@ -351,14 +390,12 @@ struct PaymentPage {
                 .justifyContent(FlexAlign.Center)
                 .margin({ left: 12 });
 
-                // 支付方式名称
                 Text(option.label)
                   .fontSize(15)
                   .fontColor('#333333')
                   .margin({ left: 12 })
                   .layoutWeight(1);
 
-                // 选中标记
                 if (this.isSelected(option.key)) {
                   SymbolGlyph($r("sys.symbol.checkmark"))
                     .fontSize(18)
@@ -433,23 +470,6 @@ struct PaymentPage {
     .height('100%')
     .backgroundColor('#F5F5F5');
   }
-
-  // 格式化日期时间
-  private formatDateTime(): string {
-    if (!this.schedule) return '';
-    const showTime = this.schedule.showTime;
-    if (!showTime) return '';
-
-    const date = new Date(showTime);
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-
-    const endDate = new Date(date.getTime() + (this.movie?.duration ?? 0) * 60000);
-    const endHours = String(endDate.getHours()).padStart(2, '0');
-    const endMinutes = String(endDate.getMinutes()).padStart(2, '0');
-
-    return `${month}月${day}日 ${hours}:${minutes}-${endHours}:${endMinutes}`;
-  }
 }
+
+export default PaymentPage;

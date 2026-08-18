@@ -1,7 +1,7 @@
 import { http } from "@kit.NetworkKit";
 
 export class  HttpUtil{
-  BASE_URL:string="http://10.98.10.164:8081/movieplatform";
+  BASE_URL:string="http://10.98.150.138:8081/movieplatform";
 
   static BASE_URL: string | undefined;
 

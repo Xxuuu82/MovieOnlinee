@@ -9,8 +9,20 @@ import { url } from '@kit.ArkTS';
 struct MainPage {
   @State currentIndex: number = 0;
 
-  // 用来通知“我的”页面重新获取余额
-  @State balanceRefreshKey: number = 0;
+  // 用来通知"我的"页面重新获取余额
+  @State refreshKey: number = 0;
+
+  // ==========================================================
+  // 🔥 页面每次显示时触发（从子页面返回时）
+  // ==========================================================
+  onPageShow() {
+    console.info('MainPage 页面显示，触发余额刷新');
+
+    if (this.currentIndex === 3) {
+      this.refreshKey++;
+      console.info('从子页面返回，刷新余额，次数:', this.refreshKey);
+    }
+  }
 
   @Builder
   tabBuilder(title: string, targetIndex: number, icon: Resource) {
@@ -76,7 +88,7 @@ struct MainPage {
       // 我的
       TabContent() {
         MyComponent({
-          refreshKey: this.balanceRefreshKey
+          refreshKey: this.refreshKey
         })
       }
       .tabBar(
@@ -91,13 +103,11 @@ struct MainPage {
     .onChange((index: number) => {
       this.currentIndex = index;
 
-      // 每次切换到“我的”页面，都通知 MyComponent 刷新余额
       if (index === 3) {
-        this.balanceRefreshKey++;
-
+        this.refreshKey++;
         console.info(
-          '切换到“我的”页面，余额刷新次数:',
-          this.balanceRefreshKey
+          '切换到"我的"页面，余额刷新次数:',
+          this.refreshKey
         );
       }
     })
