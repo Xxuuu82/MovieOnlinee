@@ -1,7 +1,8 @@
 import { http } from "@kit.NetworkKit";
 
 export class  HttpUtil{
-  BASE_URL:string="http://10.98.10.164:8081/movieplatform";
+  BASE_URL:string="http://10.98.150.138:8081/movieplatform";
+
   static BASE_URL: string | undefined;
 
   private request<T>(url:string,method:http.RequestMethod,extraData?:Object):Promise<T>{
@@ -46,8 +47,10 @@ export class  HttpUtil{
     return this.request<T>(fullUrl, http.RequestMethod.GET);
   }
 
-  post<T>(url:string,parmas:Object):Promise<T>{
-    return this.request(url,http.RequestMethod.POST,parmas);
+
+
+  post<T>(url: string, params?: Object): Promise<T> {
+    return this.request<T>(url, http.RequestMethod.POST, params);
   }
 }
 export default new HttpUtil();

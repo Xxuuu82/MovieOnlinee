@@ -2,19 +2,19 @@
   "string": [
     {
       "name": "module_desc",
-      "value": "应用模块描述"
+      "value": "module description"
     },
     {
       "name": "EntryAbility_desc",
-      "value": "入口Ability描述"
+      "value": "description"
     },
     {
       "name": "EntryAbility_label",
-      "value": "通鸿影院"
+      "value": "MovieOnline"
     },
     {
       "name": "internet_reason",
-      "value": "用于访问网络获取电影数据"
+      "value": "需要访问网络以获取电影数据"
     }
   ]
 }
