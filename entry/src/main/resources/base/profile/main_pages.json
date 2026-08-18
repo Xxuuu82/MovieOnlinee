@@ -5,6 +5,7 @@
     "pages/CinemaDetail",
     "pages/SelectSeatPage",
     "pages/MovieCinemaListPage",
-    "pages/CinemaSaveList"
+    "pages/CinemaSaveList",
+    "pages/MovieDetailPage"
   ]
 }
