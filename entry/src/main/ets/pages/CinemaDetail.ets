@@ -21,6 +21,7 @@ struct CinemaDetail {
   @State cinema: Cinema | null = null;
   @State cinemaId: number = 0;
   @State movieId: number = 0;
+  @State posterUrl:string = '';
   @State schedules: Schedule[] = [];  // 当前电影的所有排片
   @State scheduleGroups: ScheduleGroup[] = [];  // 按日期分组后的排片
   @State selectedDate: string = '';// 当前选择的日期
@@ -34,6 +35,7 @@ struct CinemaDetail {
     const params: Record<string, Object> = this.getUIContext().getRouter().getParams() as Record<string, Object>;
     this.cinemaId = (params?.cinemaId as number) ?? 0;
     this.movieId = (params?.movieId as number) ?? 0;
+    this.posterUrl = params.posterUrl as string;
     this.loadAllData();
   }
 
@@ -101,7 +103,15 @@ struct CinemaDetail {
         );
       if (response.code === 200 && response.data) {
         this.movies = response.data;
+        // 找到用户点击购买的电影在影院电影列表中的位置
+        const index = this.movies.findIndex(
+          (movie: Movie) => movie.id === this.movieId
+        );
+        if (index >= 0) {
+          this.currentIndex = index;
+        }
         console.info('影院影片数量:', this.movies.length);
+        console.info('当前电影索引:', this.currentIndex);
       } else {
         console.error('获取影院影片失败:', response.message);
         this.movies = [];

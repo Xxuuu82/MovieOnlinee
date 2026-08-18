@@ -87,12 +87,13 @@ export struct HomeComponent {
   /**
    * 跳转到影片对应影院列表
    */
-  goToMovieCinemaList(movieId: number, movieName: string) {
+  goToMovieCinemaList(movieId: number, movieName: string, posterUrl: string) {
     this.getUIContext().getRouter().pushUrl({
       url: 'pages/MovieCinemaListPage',
       params: {
         movieId: movieId,
-        movieName: movieName
+        movieName: movieName,
+        posterUrl: posterUrl
       }
     });
   }
@@ -224,7 +225,7 @@ export struct HomeComponent {
                       pressed: { backgroundColor: '#ff0f6b91' }
                     })
                     .onClick(() => {
-                      this.goToMovieCinemaList(movie.id, movie.movieName);
+                      this.goToMovieCinemaList(movie.id, movie.movieName,movie.posterUrl);
                     })
                 }
                 .width(110)
