@@ -109,8 +109,10 @@ export struct CinemaSaveList {
       // 顶部导航
       Row() {
         SymbolGlyph($r('sys.symbol.chevron_left'))
+          .margin({ left: 8 })
           .fontSize(24)
           .fontColor(['#333333'])
+          .renderingStrategy(SymbolRenderingStrategy.SINGLE)
           .onClick(() => {
             this.goBack()
           })
