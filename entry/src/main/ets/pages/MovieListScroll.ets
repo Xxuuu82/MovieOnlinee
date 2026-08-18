@@ -149,6 +149,9 @@ export struct MovieListScroll {
     for (let i = 0; i < this.movies.length; i++) {
       this.cardPosition[i] = i * (this.cardWidth + this.cardSpace);
     }
+    const itemWidth = this.cardWidth + this.cardSpace;
+    this.cardOffset = -(this.currentIndex * itemWidth);
+    this.lastCardOffset = this.cardOffset;
   }
   onIndexChange() {
     if (this.movies.length === 0) return;

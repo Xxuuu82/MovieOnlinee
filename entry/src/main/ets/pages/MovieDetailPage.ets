@@ -384,7 +384,8 @@ export struct MovieDetailPage {
       url: 'pages/MovieCinemaListPage',
       params: {
         movieId: this.movie.id,
-        movieName: this.movie.movieName
+        movieName: this.movie.movieName,
+        posterUrl: this.movie.posterUrl
       }
     });
   }
