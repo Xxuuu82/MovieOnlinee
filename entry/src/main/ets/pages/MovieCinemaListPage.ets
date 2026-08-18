@@ -28,7 +28,8 @@ export struct MovieCinemaListPage {
   @State isMovieLoading: boolean = true;
   @State isCinemaLoading: boolean = true;
 
-  private movieId: number = 0;
+  @State movieId: number = 0;
+  @State posterUrl:string = '';
 
   // ==================== 生命周期 ====================
 
@@ -37,6 +38,7 @@ export struct MovieCinemaListPage {
       this.getUIContext().getRouter().getParams() as Record<string, Object>;
 
     this.movieId = (params?.movieId as number) ?? 0;
+    this.posterUrl = (params?.posterUrl as string) ?? '';
 
     if (this.movieId > 0) {
       this.loadData();
@@ -248,7 +250,8 @@ export struct MovieCinemaListPage {
         url: 'pages/CinemaDetail',
         params: {
           cinemaId: cinemaId,
-          movieId: this.movieId
+          movieId: this.movieId,
+          posterUrl:this.posterUrl
         }
       });
   }

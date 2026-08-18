@@ -44,7 +44,7 @@ export struct MyComp{
             .borderRadius(5)
             .onClick(()=>{
               this.getUIContext().getRouter().pushUrl({
-                url:"pages/loginPage"
+                url:"pages/LoginPage"
               })
             })
         }
