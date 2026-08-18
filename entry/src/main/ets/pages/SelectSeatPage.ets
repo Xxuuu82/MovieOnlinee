@@ -1,6 +1,7 @@
 import { HallSeat, SeatRow, Seat } from '../model/HallSeat';
 import { Schedule } from '../model/Schedule';
 import { Order } from '../model/Order';
+import { UserAccount } from '../model/UserAccount';
 import HttpUtil from '../http/HttpUtil';
 import { HttpResponseResult } from '../model/HttpResponseResult';
 
@@ -30,15 +31,14 @@ struct SelectSeatPage {
 
 
   // =========================================================
-  // 模拟登录用户
+  // 当前登录用户
   //
-  // 目前 LoginPage 还没有完成，所以暂时模拟：
-  // 用户 ID = 1
-  //
-  // 等队友完成登录以后，再替换成真实用户 ID
+  // LoginPage 登录成功后会把用户信息
+  // 写入 AppStorage 的 userAccount 键
   // =========================================================
 
-  private mockUserId: number = 1;
+  @StorageLink('userAccount')
+  userAccount: UserAccount | null = null;
 
 
   // =========================================================
@@ -110,9 +110,7 @@ struct SelectSeatPage {
     console.info(
       '进入选座页面:',
       'scheduleId =',
-      this.scheduleId,
-      'mockUserId =',
-      this.mockUserId
+      this.scheduleId
     );
 
 
@@ -704,21 +702,42 @@ struct SelectSeatPage {
 
 
     // -------------------------------------------------------
-    // 当前模拟登录用户
+    // 登录校验
+    //
+    // 未登录 → 提示并跳转登录页
+    //
+    // LoginPage 登录成功后调用 router.back()，
+    // 会回到本页，已选座位仍然保留，
+    // 用户再次点击购票即可
     // -------------------------------------------------------
 
-    const userId: number =
-      this.mockUserId;
+    const userAccount: UserAccount | null =
+      this.userAccount;
 
 
-    if (userId <= 0) {
+    if (
+      !userAccount ||
+        userAccount.id <= 0
+    ) {
 
       this.showToast(
         '请先登录'
       );
 
+
+      this.goToLoginPage();
+
+
       return;
     }
+
+
+    // -------------------------------------------------------
+    // 当前登录用户 ID
+    // -------------------------------------------------------
+
+    const userId: number =
+      userAccount.id;
 
 
     // -------------------------------------------------------
@@ -870,6 +889,20 @@ struct SelectSeatPage {
 
       this.isCreatingOrder = false;
     }
+  }
+
+
+  // =========================================================
+  // 跳转登录页
+  // =========================================================
+
+  goToLoginPage(): void {
+
+    this.getUIContext()
+      .getRouter()
+      .pushUrl({
+        url: 'pages/LoginPage'
+      });
   }
 
 
