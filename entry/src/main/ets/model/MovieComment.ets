@@ -6,7 +6,7 @@ export interface MovieComment {
   movieId:number;
   rating:number;
   content:string;
-  createTime:Date;
-  updateTime:Date;
-  userAccount:UserAccount;
+  createTime:string;
+  updateTime:string;
+  userAccount?:UserAccount;
 }

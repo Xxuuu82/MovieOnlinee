@@ -9,6 +9,7 @@
     "pages/OrderDetailPage",
     "pages/MovieCinemaListPage",
     "pages/CinemaSaveList",
-    "pages/PaymentPage"
+    "pages/PaymentPage",
+    "pages/MovieDetailPage"
   ]
 }
