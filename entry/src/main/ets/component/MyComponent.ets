@@ -17,7 +17,7 @@ export struct MyComponent {
     this.getUIContext()
       .getRouter()
       .pushUrl({
-        url: 'pages/loginPage'
+        url: 'pages/LoginPage'
       })
   }
 

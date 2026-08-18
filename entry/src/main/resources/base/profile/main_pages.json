@@ -1,7 +1,7 @@
 {
   "src": [
     "pages/Index",
-    "pages/loginPage",
+    "pages/LoginPage",
     "pages/CinemaDetail",
     "pages/SelectSeatPage",
     "pages/RegisterPage",
