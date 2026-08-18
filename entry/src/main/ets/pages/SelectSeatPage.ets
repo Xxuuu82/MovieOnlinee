@@ -884,9 +884,9 @@ struct SelectSeatPage {
     this.getUIContext()
       .getRouter()
       .pushUrl({
-        url: 'pages/OrderPaymentPage',
+        url: 'pages/PaymentPage',
         params: {
-          orderId: orderId
+          orderId: orderId,
         }
       });
   }
