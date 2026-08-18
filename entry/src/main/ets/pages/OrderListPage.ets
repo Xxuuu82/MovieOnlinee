@@ -555,7 +555,13 @@ struct OrderListPage {
           .fontColor([Color.Black])
           .padding({ left: 5 })
           .onClick(() => {
-            this.getUIContext().getRouter().back();
+            console.info('返回"我的"页面');
+            this.getUIContext().getRouter().replaceUrl({
+              url: 'pages/Index',
+              params: {
+                targetIndex: 3  // "我的" Tab 的索引
+              }
+            });
           });
 
         Text('我的订单')

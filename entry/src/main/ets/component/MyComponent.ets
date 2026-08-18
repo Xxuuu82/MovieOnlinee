@@ -26,7 +26,6 @@ interface BalanceInfoResponse {
   data: BalanceData;
 }
 
-@Entry
 @Component
 export struct MyComponent {
   // ==========================================================
@@ -37,7 +36,7 @@ export struct MyComponent {
   userAccount: UserAccount | null = null
 
   // ==========================================================
-  // 🔥 接收 Index.ets 的余额刷新通知
+  // 🔥 接收父页面的刷新信号
   // ==========================================================
   @Prop
   @Watch('onRefreshKeyChange')
@@ -52,20 +51,17 @@ export struct MyComponent {
   // ==========================================================
   aboutToAppear() {
     console.info('MyComponent 第一次出现')
-
-    // 根据当前登录状态加载余额
     this.loadBalance()
   }
 
   // ==========================================================
-  // 🔥 Index.ets 通知刷新余额
+  // 🔥 刷新信号变化时触发（任何场景回到页面都会触发）
   // ==========================================================
   onRefreshKeyChange() {
     console.info(
-      '检测到进入“我的”页面，重新获取余额，refreshKey:',
+      '检测到刷新信号，重新获取余额，refreshKey:',
       this.refreshKey
     )
-
     this.loadBalance()
   }
 
@@ -79,10 +75,8 @@ export struct MyComponent {
     )
 
     if (this.userAccount) {
-      // 登录状态
       this.loadBalance()
     } else {
-      // 退出登录
       this.balance = 0
       this.showRechargeDialog = false
       this.rechargeAmount = ''
@@ -115,7 +109,6 @@ export struct MyComponent {
           )
         }
 
-        // 🔥 更新页面余额
         this.balance = newBalance
       }
     } catch (error) {
@@ -168,7 +161,6 @@ export struct MyComponent {
         this.rechargeAmount = ''
         this.showRechargeDialog = false
 
-        // 充值成功后重新获取余额
         await this.loadBalance()
 
         this.getUIContext().getPromptAction().showToast({
@@ -237,28 +229,13 @@ export struct MyComponent {
   logout(): void {
     console.info('开始退出登录')
 
-    // ----------------------------------------------------------
-    // 1. 关闭充值弹窗
-    // ----------------------------------------------------------
     this.showRechargeDialog = false
     this.rechargeAmount = ''
-
-    // ----------------------------------------------------------
-    // 2. 清除页面上的余额
-    // ----------------------------------------------------------
     this.balance = 0
 
-    // ----------------------------------------------------------
-    // 3. 清除登录信息
-    // ----------------------------------------------------------
     AppStorage.delete('userAccount')
     AppStorage.delete('isLogin')
 
-    // ----------------------------------------------------------
-    // 4. 🔥 强制让当前组件进入“未登录”状态
-    //
-    // 不修改 userAccount 的定义，只修改当前实例的值
-    // ----------------------------------------------------------
     this.userAccount = null
 
     console.info('退出登录完成')
@@ -532,9 +509,7 @@ export struct MyComponent {
             '充值中心',
             'bolt',
             () => {
-              // 打开充值中心前重新获取余额
               this.loadBalance()
-
               this.showRechargeDialog = true
             }
           )

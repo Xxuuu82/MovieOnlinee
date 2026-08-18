@@ -284,7 +284,9 @@ struct OrderDetailPage {
   }
 
   goBack() {
-    this.getUIContext().getRouter().back();
+    this.getUIContext().getRouter().replaceUrl({
+      url: 'pages/OrderListPage'
+    });
   }
 
   // ==========================================================
